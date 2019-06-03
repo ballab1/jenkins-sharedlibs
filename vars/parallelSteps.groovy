@@ -1,4 +1,4 @@
-def call(Closure process, ArrayList<String> items, Closure action) {
+def call(ArrayList<String> items, Closure process, Closure action) {
     def stepsForParallel = [:]
     items.each { item_name ->
         // Into each branch we put the pipeline code we want to execute

@@ -5,10 +5,9 @@ def call(Map pipelineParams) {
         stages {
             stage ('Process Items') {
                 steps {
-                    parallelSteps(pipelineParams.process, pipelineParams.items, pipelineParams.action)
+                    parallelSteps(pipelineParams.items, pipelineParams.process, pipelineParams.action)
                 }
             }
-
         }
         post {
             always {
