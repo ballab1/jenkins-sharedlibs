@@ -1,15 +1,13 @@
 import groovy.json.*
 
-def call(String repoName) {
+def call(String dirFileSpec) {
 
-    def jsonFile = new File("${WORKSPACE}/dependants/${repoName}.json")
+    def jsonFile = new File("${WORKSPACE}/dependants/${dirFileSpec}.json")
     if (! jsonFile.exists()) {
         println 'unable to find '+jsonFile.absolutePath+'...'
         return
     }
 
-    manager.addInfoBadge(reponame)
-    currentBuild.displayName = currentBuild.displayName + ' : ' + reponame
     println 'found '+jsonFile.absolutePath
 
     def slurper = new JsonSlurper()

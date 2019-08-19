@@ -12,8 +12,7 @@ def call(Map pipelineParams) {
         }
         post {
             always {
-                echo 'Publish to Kafka'
-                kafkaPublish(pipelineParams.topic)
+                kafkaBuildReporter()
             }
         }
     }
