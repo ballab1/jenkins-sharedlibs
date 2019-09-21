@@ -1,3 +1,9 @@
 def call() {
-  Jenkins.instance.nodes.collect{ it.name }
+  def nodes = []
+  Jenkins.instance.nodes.each {
+    if (it.toComputer().isOnline()) {
+      nodes += it.name
+    }
+  }
+  nodes
 }
