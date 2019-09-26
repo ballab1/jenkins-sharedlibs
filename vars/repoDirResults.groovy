@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 
 def call(ArrayList<String> hosts) {
 

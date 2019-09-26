@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 
 def call(Closure body, String item_name) {
   return {

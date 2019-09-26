@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 
 def call(String credsId) {
     stage ('list dbasbases') {

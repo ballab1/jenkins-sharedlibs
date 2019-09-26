@@ -1,11 +1,9 @@
 #!/usr/bin/env groovy
 
-def call() {
-  def nodes = []
+def call(String who, String where) {
   Jenkins.instance.nodes.each {
     if (it.toComputer().isOnline()) {
-      nodes += it.name
+      sh "ssh ${who}@${it.name} 'rm -rf ${where}/workspace/*'"
     }
   }
-  nodes
 }

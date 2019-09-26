@@ -1,3 +1,4 @@
+#!/usr/bin/env groovy
 
 def call(String dbName, String credsId) {
     stage (dbName) {

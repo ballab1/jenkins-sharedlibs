@@ -1,3 +1,5 @@
+#!/usr/bin/env groovy
+
 import hudson.FilePath
 import hudson.model.Result
 
