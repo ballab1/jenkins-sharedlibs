@@ -3,10 +3,13 @@
 @Grab(group = "org.apache.kafka", module = "kafka-clients", version = "1.0.0")
 @Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.1.2')
 
+import java.time.Instant
+import java.util.Date
 import org.apache.kafka.clients.producer.Callback
 import org.apache.kafka.clients.producer.KafkaProducer
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
+
 
 def call()
 {
@@ -16,21 +19,20 @@ def call()
                   'key.serializer': 'org.apache.kafka.common.serialization.StringSerializer',
                   'value.serializer': 'org.apache.kafka.common.serialization.StringSerializer' ]
 
-    String topic = currentBuild.projectName.toLowerCase()
-    topic = topic.replaceAll("'", '')
-    topic = topic.replaceAll('\\s', '_')
-    topic += '_build_report'
+    String topic = 'jenkins-build-report'
 
-    def data = [ 'absolute_url' : currentBuild.absoluteUrl,
-                 'build_cause' : currentBuild.buildCauses,
+    def unixTimeStamp = (long) ( currentBuild.startTimeInMillis / 1000 )
+    def data = [ 'record-id ' : UUID.randomUUID().toString(),
+                 'timestamp' : Date.from(Instant.ofEpochSecond(unixTimeStamp)).format('YYYY-MM-dd HH:mm:ss'),
+                 'build_url' : currentBuild.absoluteUrl,
                  'build_number' : currentBuild.number,
+                 'build_cause' : currentBuild.buildCauses,
                  'display_name' : currentBuild.displayName,
                  'duration' : currentBuild.duration,
-                 'duration_string' : currentBuild.durationString,
-                 'id' : currentBuild.id,
                  'project_name' : currentBuild.projectName,
                  'result' : currentBuild.result,
-                 'start_time' : currentBuild.startTimeInMillis
+                 'id' : currentBuild.id,
+                 'duration_string' : currentBuild.durationString - ~/ and counting/
                ]
     def message = toJSON( data )
     String key = new Random().nextLong();

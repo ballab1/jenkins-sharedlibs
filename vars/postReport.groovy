@@ -3,12 +3,13 @@
 import hudson.FilePath
 import hudson.model.Result
 
-def call(String reportName) {
+def call(String stashName, String reportName) {
     def build = manager.build
     if (build.result == Result.SUCCESS) {
 
-        def file = new FilePath(new File(reportName))
-        String results = file.readToString()
+        unstash stashName
+        def report = new File(reportName)
+        String results = report.readToString()
 
         def summary = manager.createSummary('empty.gif')
         summary.appendText(results, false)
