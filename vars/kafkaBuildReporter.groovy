@@ -22,8 +22,11 @@ def call()
     String topic = 'jenkins-build-report'
 
     def unixTimeStamp = (long) ( currentBuild.startTimeInMillis / 1000 )
+    String zuluTime = Date.from(Instant.ofEpochSecond(unixTimeStamp)).format('YYYY-MM-dd HH:mm:ss') + 'Z'
+    zuluTime.replace(' ', 'T')
+
     def data = [ 'record-id ' : UUID.randomUUID().toString(),
-                 'timestamp' : Date.from(Instant.ofEpochSecond(unixTimeStamp)).format('YYYY-MM-dd HH:mm:ss'),
+                 'timestamp' : zuluTime,
                  'build_url' : currentBuild.absoluteUrl,
                  'build_number' : currentBuild.number,
                  'build_cause' : currentBuild.buildCauses,
