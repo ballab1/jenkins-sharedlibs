@@ -15,7 +15,7 @@ def call()
 {
     echo 'Publish to Kafka'
 
-    def props = [ 'bootstrap.servers': System.getenv('KAFKA_BOOTSTRAP_SERVERS') ?: 'ubuntu-s3:9092,ubuntu-s4:9092,ubuntu-s1:9092',
+    def props = [ 'bootstrap.servers': System.getenv('KAFKA_BOOTSTRAP_SERVERS') ?: 'ubuntu-s3:9092,ubuntu-s4:9092',
                   'key.serializer': 'org.apache.kafka.common.serialization.StringSerializer',
                   'value.serializer': 'org.apache.kafka.common.serialization.StringSerializer' ]
 
