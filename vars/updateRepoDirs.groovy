@@ -7,10 +7,6 @@ def call(String dirFileSpec) {
     def jsonFile = new File("${WORKSPACE}/dependants/${dirFileSpec}.json")
     if (! jsonFile.exists()) {
         println 'unable to find '+jsonFile.absolutePath+'...'
-        sh '''
-              pwd
-              ls -al
-           '''
         return
     }
 
