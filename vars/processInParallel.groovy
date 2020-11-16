@@ -4,7 +4,12 @@ def call(Map pipelineParams) {
 
     pipeline {
         agent { label pipelineParams.agent }
-
+        options {
+            buildDiscarder(logRotator(numToKeepStr: '20'))
+            disableConcurrentBuilds()
+            disableResume()
+            timestamps()
+        } 
         stages {
             stage ('Process Items') {
                 steps {
