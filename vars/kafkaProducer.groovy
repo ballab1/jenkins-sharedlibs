@@ -10,7 +10,7 @@ import org.apache.kafka.clients.producer.RecordMetadata
 
 def call(String topic, ArrayList<String> data)
 {
-    def props = [ 'bootstrap.servers': System.getenv('KAFKA_BOOTSTRAP_SERVERS') ?: 's3.ubuntu.honme:9092,s4.ubuntu.home:9092,s8.ubuntu.home:9092',
+    def props = [ 'bootstrap.servers': System.getenv('KAFKA_BOOTSTRAP_SERVERS') ?: 's3.ubuntu.home:9092,s4.ubuntu.home:9092,s8.ubuntu.home:9092',
                   'key.serializer': 'org.apache.kafka.common.serialization.StringSerializer',
                   'value.serializer': 'org.apache.kafka.common.serialization.StringSerializer' ]
 
