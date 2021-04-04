@@ -6,7 +6,7 @@ def call(ArrayList<String> items, Closure process, Closure action) {
         // Into each branch we put the pipeline code we want to execute
         stepsForParallel[item_name] = process(action, item_name)
     }
-    stepsForParallel.failFast = true
+//    stepsForParallel.failFast = true
 
     parallel stepsForParallel
 }
