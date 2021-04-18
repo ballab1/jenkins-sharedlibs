@@ -6,9 +6,7 @@ def call(Closure body, String item_name) {
       timestamps {
         ws {
           checkout scm
-          script {
-              body(item_name)
-          }
+          body(item_name)
         }
       }
     }

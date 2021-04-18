@@ -7,7 +7,7 @@ def call(String dbName, String credsId) {
                           usernameVariable: 'USER')
             ]) {
             // dump database, and make sure there is no time info in file
-            sh "sudo docker exec -i mysql mysqldump --user ${USER} --password=${PWRD} ${dbName} | grep -v '^-- Dump completed on' > ${dbName}.sql"
+            sh 'sudo docker exec -i mysql mysqldump --user ${USER} --password=${PWRD}' + " ${dbName} | grep -v '^-- Dump completed on' > ${dbName}.sql"
             stash includes: dbName+'.sql', name: dbName
         }
     }
