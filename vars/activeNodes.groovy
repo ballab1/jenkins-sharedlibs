@@ -3,7 +3,7 @@
 def call(def includeMaster = null) {
     def nodes = []
     if (includeMaster) {
-        nodes += 'master'
+        nodes += 'built-in'
     }
     Jenkins.instance.nodes.each {
         if (it.toComputer().isOnline()) {

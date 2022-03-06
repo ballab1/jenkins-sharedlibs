@@ -61,7 +61,7 @@ public class JenkinsProperties {
         computers.each { node, computer ->
           if (!label || label.contains(node)) {
               println "querying node: ${node.displayName}"
-              slaveMap[node.displayName?:'master'] = new JenkinsNode(node, computer).properties
+              slaveMap[node.displayName?:'built-in'] = new JenkinsNode(node, computer).properties
               sleep(100)
           }
         }
@@ -111,7 +111,7 @@ public class JenkinsAgent {
     public def getType() {
 
         if (agent instanceof hudson.model.Hudson) {
-            return 'master'
+            return 'built-in'
         }
 
         if (agent instanceof hudson.slaves.SlaveComputer) {
@@ -189,8 +189,8 @@ public class JenkinsNode : JenkinsAgent {
 
         def props = [:]
 
-        props.nodeName = 'master'
-        props.label = 'master'
+        props.nodeName = 'built-in'
+        props.label = 'built-in'
         props.label = this.node.displayName
         props.uname = masterName
         props.displayName = this.node.displayName
@@ -311,7 +311,7 @@ cat /etc/c4buildversion
     public String getTypeFactoryProps() {
 
         switch(this.type) {
-            case 'master':
+            case 'built-in':
                 return this.nodePropsMaster
             case 'unix':
                 return this.nodePropsUnix
@@ -365,8 +365,8 @@ public class JenkinsLabel {
         props.name = label.displayName
         props.description = label.description
         props.class = label.class.toString()
-        props.jobs = label.tiedJobs.collect{ it.name?:'master' }.findAll{ !it.contains('=') }.unique().sort()
-        props.nodes = label.nodes.collect{ it.nodeName?:'master' }.unique().sort()
+        props.jobs = label.tiedJobs.collect{ it.name?:'built-in' }.findAll{ !it.contains('=') }.unique().sort()
+        props.nodes = label.nodes.collect{ it.nodeName?:'built-in' }.unique().sort()
         props.totalExecutors = label.totalExecutors
         props.totalConfiguredExecutors = label.totalConfiguredExecutors
         props.url = label.url

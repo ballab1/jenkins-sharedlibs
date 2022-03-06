@@ -12,5 +12,5 @@ def call(String prefix, String nodeName) {
             }
         }
     }
-    return 'echo '
+    return prefix + nodeName
 }
