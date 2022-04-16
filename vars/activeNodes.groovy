@@ -6,7 +6,7 @@ def call(def includeMaster = null) {
         nodes += 'built-in'
     }
     Jenkins.instance.nodes.each {
-        if (it.toComputer().isOnline()) {
+        if (it.toComputer().isOnline() && !(it.name =~ 'kubernetes.*')) {
             nodes += it.name
         }
     }
