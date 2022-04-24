@@ -4,7 +4,7 @@ import groovy.json.*
 
 def call(String dirFileSpec) {
 
-    def jsonFile = new File("${WORKSPACE}/dependants/${dirFileSpec}.json")
+    def jsonFile = new File(dirFileSpec)
     if (! jsonFile.exists()) {
         println 'unable to find '+jsonFile.absolutePath+'...'
         return
