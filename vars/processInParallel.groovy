@@ -21,9 +21,9 @@ def call(Map pipelineParams) {
             always {
                 kafkaBuildReporter()
             }
-            cleanup {
-                deleteDir()
-            }
+//            cleanup {
+//                deleteDir()
+//            }
         }
     }
 }
