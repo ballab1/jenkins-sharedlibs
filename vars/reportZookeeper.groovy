@@ -5,7 +5,7 @@ def call(List zoo_nodes) {
     zoo_nodes.each() { node ->
          sh '''
            {
-              hostname -f
+              echo 'hostname: ''' + node + ''' '
               echo stat | nc ''' + node + ''' 2181
               echo
            }  | tee -a zookeeper.report
