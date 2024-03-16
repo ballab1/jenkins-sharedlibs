@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-@Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.5.1')
+@Grab(group = 'ch.qos.logback', module = 'logback-classic', version = '1.5.3')
 @Grab(group = "org.apache.kafka", module = "kafka-clients", version = "3.7.0")
 
 import org.apache.kafka.clients.producer.Callback
