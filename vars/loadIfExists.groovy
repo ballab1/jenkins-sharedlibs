@@ -5,8 +5,10 @@ def call(String groovySrc) {
     if (fileExists(groovySrc)) {
       try {
 	def lines = readFile(groovySrc).split('\n')
-        addBadge(icon: lines[0], text: lines[1])
-        currentBuild.result = lines[2]
+        if (lines.size() >= 2)
+           addBadge(icon: lines[0], text: lines[1])
+        if (lines.size() >= 3)
+           currentBuild.result = lines[2]
       }
       catch(Exception e) {
         println(e)
