@@ -12,7 +12,7 @@ import java.time.Instant
 import java.util.Date
 
 
-def call()
+def call(String state, Map params = [:])
 {
     echo 'Publish to Kafka'
 
@@ -26,7 +26,8 @@ def call()
     String zuluTime = Date.from(Instant.ofEpochSecond(unixTimeStamp)).format('YYYY-MM-dd HH:mm:ss') + 'Z'
     zuluTime.replace(' ', 'T')
 
-    def data = [ 'record-id' : UUID.randomUUID().toString(),
+    def data = [ 'state' : state,
+                 'record-id' : UUID.randomUUID().toString(),
                  'timestamp' : zuluTime,
                  'build_url' : currentBuild.absoluteUrl,
                  'build_number' : currentBuild.number,
