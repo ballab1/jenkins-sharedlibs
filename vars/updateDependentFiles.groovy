@@ -1,56 +1,116 @@
 
-// The dependencyInfo.groovy file generates a hash-based signature of a project environment,
-// incorporating elements like project settings, Git state, Docker images, and build arguments.
 
-def call(String settingsFile = 'ci/project.settings') {
+//--------------------------------------------------------------------------------
+// The updateDependentFiles.groovy reads a project.settings file to determine
+// a projects dependencies. It then updates the project files defined
+//--------------------------------------------------------------------------------
+
+//@NonCPS
+def call(String settingsFile = 'project.settings') {
     def project = getProjectSettings(settingsFile)
 
     int count = 0
-    if (project?.containsKey('dependencies')){
+    if (project?.containsKey('dependencies')) {
         project.dependencies.each { param, dependencies ->
-            updateDependencies(param, dependencies)
-            count += dependencies.collectMany { it.files }.size()
+            println 'updateDependentFiles - build result: ' + currentBuild.currentResult
+            if (currentBuild.currentResult == 'SUCCESS') {
+                println "updateDependentFiles:updateDependentFiles - param: dependencies ->  ${param}: ${dependencies}"
+                count += updateDependencies(param, dependencies)
+            }
         }
     }
-    println "Updated ${count} dependent files"
+    println 'updateDependentFiles - build result: ' + currentBuild.currentResult
+    println "updateDependentFiles - Updated ${count} dependent files"
 }
 
 //--------------------------------------------------------------------------------
-private String getLatest(String repo = '') {
-
-    def cmd = repo?.trim() ? "git ls-remote ${repo} HEAD" : 'git rev-parse HEAD'
-    def commitHash = execute(cmd)
-    return commitHash?.take(10)
-}
-
-//--------------------------------------------------------------------------------
-private void updateDependencies(String param, List dependencies) {
-    def orgParm = env[param]
+//@NonCPS
+private int updateDependencies(String param, List dependencies) {
+    int count = 0
+    def orgParm = System.env[param]
     dependencies.reverseEach { dependency ->
-        if (!orgParm) updateEnvironmentParam(param, dependency.repo)
-        updateFiles(param, dependency.files)
+        if (currentBuild.currentResult == 'SUCCESS') {
+            println "    updateDependentFiles:updateDependencies - repo: ${dependency.repo}, files: ${dependency.files}"
+            if (!orgParm)
+                orgParm = updateEnvironmentParam(param, dependency.repo)
+            count += updateFiles(param, orgParm, dependency.files)
+        }
     }
+    return count
 }
 
 //--------------------------------------------------------------------------------
-private void updateEnvironmentParam(String param, String repo) {
+//@NonCPS
+private String updateEnvironmentParam(String param, String repo) {
     def latest = getLatest(repo)
-    env[param] = latest
+    env["${param}"] = latest
+//    def ev = env["${param}"]
+//    println "    updateDependentFiles:updateEnvironmentParam - ${param}: '${ev}'"
+    return latest
 }
 
 //--------------------------------------------------------------------------------
-private void updateFiles(String param, List files) {
+@NonCPS
+private int updateFiles(String param, String val, List files) {
+    int count = 0
     files.each { file ->
+       sh """
+           set -x
+           [ ! -f "${file}.template" ] && exit 1
+           echo 'updating "${file}"'
+	   sed -e 's|\\\$\{?${param}\}?|${val}|g' "${file}.template" > "${file}"
+       """
+       count++
+    }
+    return count
+}
+
+//--------------------------------------------------------------------------------
+//@NonCPS
+private int updateFilesX(String param, String val, List files) {
+    int count = 0
+    files.each { file ->
+        def outputFile, templateFile
         try {
-            println "updating '${file}'"
-            def templateFile = new File("${file}.template")
-            def outputFile = new File(file)
-            def substituted = templateFile.text.replaceAll("\\${param}", System.getenv(param))
-            outputFile.text = substituted
+            templateFile = file + '.template'
+            println "    updateDependentFiles:updateFiles - templateFile '${templateFile}'"
+            if (fileExists(templateFile)) {
+                outputFile = file
+                println "    updateDependentFiles:updateFiles - outputFile '${file}'"
+            }
+            else {
+                templateFile = 'ci/' + file + '.template'
+                println "    updateDependentFiles:updateFiles - templateFile '${templateFile}'"
+                if (fileExists(templateFile)) {
+                    outputFile ='ci/' + file
+                    println "    updateDependentFiles:updateFiles - outputFile 'ci/${file}'"
+                }
+                else {
+                    throw new FileNotFoundException("template file '${file}' not found.")
+                }
+            }
+            println "    updateDependentFiles:updateFiles - updating '${file}'"
+
+            def substVal = System.getProperty(param)
+            if (substVal) {
+                def substText = readFile(templateFile)
+                def subStr = '\\$\\{' + param + '\\}'
+                if (substText =~ subStr) {
+                    substText = substText.replaceAll(subStr, substVal)
+                }
+                subStr = '\\$' + param
+                if (substText =~ subStr) {
+                    substText = substText.replaceAll(subStr, substVal)
+                }
+                writeFile(outputFile, substText)
+                count++
+           }
         }
         catch(e) {
-            println "Error updating '${file}'\nreason: ${e.msg}"
+            println "updateDependentFiles:updateFiles - Error updating '${file}', reason: ${e.getMessage()}"
+            manager.addWarningBadge('Error updating dependencies')
+	    manager.buildUnstable()
         }
     }
+    return count
 }
-//--------------------------------------------------------------------------------

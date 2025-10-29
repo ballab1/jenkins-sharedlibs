@@ -3,7 +3,11 @@ import static java.nio.file.StandardWatchEventKinds.*
 import java.security.MessageDigest
 
 //--------------------------------------------------------------------------------
-def call(String settingsFile = 'ci/project.settings') {
+// The dependencyInfo.groovy file generates a hash-based signature of a project environment,
+// incorporating elements like project settings, Git state, Docker images, and build arguments.
+//--------------------------------------------------------------------------------
+
+def call(String settingsFile = 'project.settings') {
     def config = getProjectSettings(settingsFile)
     if (!config) {
         return ''
@@ -14,6 +18,7 @@ def call(String settingsFile = 'ci/project.settings') {
     def treeSha = getGitTreeHash(dirty)
     dependencies << treeSha
 
+if (0) {
     def argsJson = getBuildArgs(config)
     dependencies << argsJson
 
@@ -22,7 +27,7 @@ def call(String settingsFile = 'ci/project.settings') {
 
     def cbfInfo = getCBFVersionInfo(baseImageId)
     dependencies << cbfInfo
-
+}
     return sha256GString(dependencies.toString())
 }
 
@@ -59,7 +64,7 @@ private def getBaseImageDigest(config) {
 
 //--------------------------------------------------------------------------------
 private def getBuildArgs(config) {
-    def argsJson = config?.build?.args?
+    def argsJson = config?.build?.args
     if (argsJson?.containsKey('FROM_BASE'))
         argsJson.removeKey('FROM_BASE')
     return argsJson
@@ -151,7 +156,7 @@ private String getImageParent(config){
 }
 
 //--------------------------------------------------------------------------------
-def getVersionTag(String dir = '.') {
+private def getVersionTag(String dir = '.') {
 
     // Navigate to the directory
     def currentDir = new File(dir)
@@ -179,8 +184,8 @@ def getVersionTag(String dir = '.') {
 }
 
 //--------------------------------------------------------------------------------
-private def sha256GString(GString gStr) {
-    return generateSha256(gStr)
+private def sha256GString(String str) {
+    return generateSha256(str)
 }
 
 //--------------------------------------------------------------------------------
@@ -193,4 +198,3 @@ private def sha256File(String filePath) {
     def file = new File(filePath)
     return generateSha256(file)
 }
-//--------------------------------------------------------------------------------
