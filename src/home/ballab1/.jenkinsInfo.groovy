@@ -90,7 +90,7 @@ public class JenkinsProperties {
                 masterName: this.masterName,
                 slaveMap:   this.slaveMap,
                 jobMap:     this.jobMap,
-                viewMap:    this.iewMap,
+                viewMap:    this.viewMap,
                 labelList:  this.labelMap
                ]
     }
