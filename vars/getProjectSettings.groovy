@@ -1,4 +1,4 @@
-@Grab('org.yaml:snakeyaml:2.2')
+@Grab('org.yaml:snakeyaml:2.7')
 import org.yaml.snakeyaml.Yaml
 
 //--------------------------------------------------------------------------------
